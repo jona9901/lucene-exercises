@@ -25,7 +25,6 @@ public class Exercise1 {
     DocsUtils utils;
     Analyzer analyzer;
     List<String> matches;
-
     String name;
     String url1, url2, url3;
     List<String> documents;
