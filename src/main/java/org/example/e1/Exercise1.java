@@ -5,6 +5,7 @@ import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -44,9 +45,16 @@ public class Exercise1 {
     public List<String> solution(String queryIn){
         StringBuilder q = new StringBuilder();
 
+        if (queryIn.charAt(0) != 'l') {
+            q.append("l*");
+        }
+
         for (int i = 0; i < queryIn.length(); i++) {
+            if (queryIn.charAt(i) == '/') {
+                q.append("\\");
+            }
             q.append(Character.toChars(queryIn.charAt(i)));
-            q.append('*');
+            q.append("*");
         }
 
         try {
@@ -58,7 +66,7 @@ public class Exercise1 {
             DirectoryReader ireader = DirectoryReader.open(directory);
             IndexSearcher isearcher = new IndexSearcher(ireader);
 
-            ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("url", analyzer);
+            ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser(name, analyzer);
             Query query = queryParser.parse(q.toString());
 
             ScoreDoc[] hits = isearcher.search(query, 10).scoreDocs;
@@ -66,7 +74,7 @@ public class Exercise1 {
             // Iterate through the results:
             for (int i = 0; i < hits.length; i++) {
                 Document hitDoc = isearcher.doc(hits[i].doc);
-                matches.add(hitDoc.get("url"));
+                matches.add(hitDoc.get(name));
             }
 
             ireader.close();
