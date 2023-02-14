@@ -1,11 +1,14 @@
-package org.example.e2;
+package org.example.e3;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.StopFilterFactory;
+import org.apache.lucene.analysis.core.WhitespaceTokenizerFactory;
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.complexPhrase.ComplexPhraseQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -17,33 +20,35 @@ import org.example.utils.DocsUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Exercise2 {
+public class Exercise3 {
     DocsUtils utils;
     Analyzer analyzer;
     List<String> matches;
-
     String name;
     String text1, text2, text3;
     List<String> documents;
 
-    Exercise2() {
+    Exercise3() {
         utils = new DocsUtils();
-        analyzer = new StandardAnalyzer();
         matches = new ArrayList<>();
 
         name = "title";
-        text1 = "to be or not to be that is the question";
+        text1 = "To be Or not to be that is the question";
         text2 = "make a long story short";
         text3 = "see eye to eye";
         documents = List.of(text1, text2, text3);
     }
 
-    public List<String> solution(String queryIn, int n) {
-        String parsedQuery = "\"" + queryIn + "\"~" + Integer.toString(n);
+    public List<String> solution(String queryIn){
+        StringBuilder q = new StringBuilder();
+
         try {
+            analyzer = new StandardAnalyzer();
+
             Path indexPath = Files.createTempDirectory("tempIndex");
             Directory directory = FSDirectory.open(indexPath);
 
@@ -52,9 +57,8 @@ public class Exercise2 {
             DirectoryReader ireader = DirectoryReader.open(directory);
             IndexSearcher isearcher = new IndexSearcher(ireader);
 
-            QueryParser queryParser = new QueryParser(name, analyzer);
-
-            Query query = queryParser.parse(parsedQuery);
+            ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser(name, analyzer);
+            Query query = queryParser.parse(q.toString());
 
             ScoreDoc[] hits = isearcher.search(query, 10).scoreDocs;
 
@@ -67,6 +71,7 @@ public class Exercise2 {
             ireader.close();
             directory.close();
             IOUtils.rm(indexPath);
+
         } catch (IOException ioException) {
             System.out.println(ioException.getMessage());
         } catch (ParseException parseException) {

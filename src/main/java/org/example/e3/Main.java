@@ -14,7 +14,7 @@ public class Main {
         CustomAnalyzer analyzer = CustomAnalyzer.builder(Paths.get("/path/to/config/dir"))
                 .withTokenizer(WhitespaceTokenizerFactory.class)
                 .addTokenFilter(ConcatFilterFactory.findSPIName(ConcatFilterFactory.class))
-                //.addTokenFilter(StopFilterFactory.class, "ignoreCase", "false", "words", "stopwords.txt", "format", "wordset")
+                .addTokenFilter(StopFilterFactory.class, "ignoreCase", "false", "words", "stopwords.txt", "format", "wordset")
                 .build();
     }
 }
