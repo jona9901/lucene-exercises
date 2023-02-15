@@ -5,7 +5,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
 import java.io.IOException;
-public class ConcatFilter extends TokenFilter {
+public final class ConcatFilter extends TokenFilter {
     private final CharTermAttribute termAtt = (CharTermAttribute)this.addAttribute(CharTermAttribute.class);
 
     public ConcatFilter(TokenStream in) {
@@ -15,15 +15,11 @@ public class ConcatFilter extends TokenFilter {
     @Override
     public boolean incrementToken() throws IOException {
         if (this.input.incrementToken()) {
-            String tempToken = "";
-            for(char c:termAtt.buffer()){
-                //if present character is not a white space then add to it temporary string
-                if(c != ' '){
-                    tempToken += c;
-                }
-            }
+            String term = termAtt.toString();
+            String termBuff = term.replace(" ", "");
+
             termAtt.setEmpty();
-            termAtt.copyBuffer(tempToken.toCharArray(), 0, tempToken.toCharArray().length);
+            termAtt.copyBuffer(termBuff.toCharArray(), 0, termBuff.length());
             return true;
         } else {
             return false;
