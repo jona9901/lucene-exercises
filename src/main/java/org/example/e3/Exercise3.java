@@ -34,7 +34,7 @@ public class Exercise3 {
         matches = new ArrayList<>();
 
         name = "title";
-        text1 = "To be Or not to be that is the question";
+        text1 = "to be or not to be that is the question";
         text2 = "make a long story short";
         text3 = "see eye to eye";
         documents = List.of(text1, text2, text3);
